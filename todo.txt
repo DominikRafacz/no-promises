@@ -1,0 +1,38 @@
+
+input:
+numpy's arrays
+X_train, X_test : n x p
+y_train, y_test : n x q
+
+
+
+architecture = Architecture()\
+    .addLayer(InputLayer(p))\
+    .addLayer(HiddenLayer(p, activation='softmax'))\
+    .addLayer(HiddenLayer(p/2, activation='ReLu', bias=False))\
+    .addLayer(OutputLayer(q, type='classification'))\
+    .setInitializationMethod(RandomInitialization())\
+    .setLossFunction(LogLoss)
+
+model_1 = architecture.initialize()
+model_1.train(X_train, y_train, momentum=0.8, batch_size=100)
+
+model_2 = architecture.initialize()
+model_2.train(other_training_plan, X_train, y_train)
+
+model_1.predict(X_test, y_test)
+
+
+-> Architecture
+
+-> Layer:
+    shape :
+    weights : Array
+
+
+-> Model:
+    layers : List<Layer>
+    training_history : List<(Double, Double)>
+
+    train(X_train : Array, y_train : Array, a lot of other parameters, evaluation_dataset=(X_test,  y_test))
+    predict(X_test,  y_test)
