@@ -8,11 +8,11 @@ y_train, y_test : n x q
 
 architecture = Architecture()\
     .addLayer(InputLayer(p))\
-    .addLayer(HiddenLayer(p, activation='softmax'))\
-    .addLayer(HiddenLayer(p/2, activation='ReLu', bias=False))\
-    .addLayer(OutputLayer(q, type='classification'))\
+    .addLayer(HiddenLayer(p, activation=Sigmoid()))\
+    .addLayer(HiddenLayer(p/2, activation=ReLu(), bias=False))\
+    .addLayer(HiddenLayer(q, activation=Softmax()))\
     .setInitializationMethod(RandomInitialization())\
-    .setLossFunction(LogLoss)
+    .setLossFunction(LogLoss())
 
 model_1 = architecture.initialize()
 model_1.train(X_train, y_train, momentum=0.8, batch_size=100)
@@ -25,14 +25,41 @@ model_1.predict(X_test, y_test)
 
 -> Architecture
 
--> Layer:
-    shape :
+-> InputLayer
+    shape : Int
+
+-> HiddenLayer:
+    shape : Int
     weights : Array
 
+    feed_forward(input) : Array
+    backpropagate(sth, parameters)
+
+-> ActivationFunction:
+    calculate(...)
+    derivative(...)
+
+-> LossFunction:
+    calculate(...)
+    derivative(...)
 
 -> Model:
-    layers : List<Layer>
+    input : InputLayer
+    layers : List<HiddenLayer>
     training_history : List<(Double, Double)>
+    loss_function : LossFunction
 
-    train(X_train : Array, y_train : Array, a lot of other parameters, evaluation_dataset=(X_test,  y_test))
+    train(X_train : Array, y_train : Array, a lot of other parameters, evaluation_dataset=(X_test,  y_test)) {
+
+        food = batch(X_train)
+        for (layer in layers):
+            food = layer.feed_forward(food)
+
+        loss = loss_function.calculate(food, batch(y_train))
+        error = loss_function.derivative(food, batch(y_train))
+        for (layer in inverse(layers)):
+             error = layer.backpropagate(error)
+
+    }
+
     predict(X_test,  y_test)
