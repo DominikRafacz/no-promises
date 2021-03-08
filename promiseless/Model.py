@@ -30,22 +30,23 @@ class Model:
     def train(self, x_train: np.ndarray, y_train: np.ndarray, batch_size=1, epochs=10, learning_rate=0.01, momentum=None, evaluation_dataset=None):
         for _ in range(epochs):
             batches_x, batches_y = self.__create_batches(x_train, y_train, batch_size)
-            for h, x_train_batch in enumerate(batches_x):
-                y_train_batch = batches_y[h]
-                for i, x in enumerate(x_train_batch):
-                    data = x
-                    for j, layer in enumerate(self._layers):
-                        data = layer.feedforward(data)
-                    loss = self._loss_function.calculate(data, y_train_batch[i])
-                    error = self._loss_function.derivative(data, y_train_batch[i])
-                    for j, layer in reversed(list(enumerate(self._layers))):
-                        error = layer.backpropagate(error)
+            for data_x, data_y in zip(batches_x, batches_y):
+                layer_values = [None]*(len(self._layers)+1)
+                layer_values[0] = data_x
+                for j, layer in enumerate(self._layers):
+                    layer_values[j+1], data_x = layer.feedforward(data_x)
+                loss = self._loss_function.calculate(data_x, data_y)
+                error = self._loss_function.derivative(data_x, data_y) * (data_x - data_y)
+                for j, layer in reversed(list(enumerate(self._layers))):
+                    delta_weights = layer.calculate_delta_weights(error, layer_values[j])
+                    error = layer.calculate_prev_error(self._layers[j-1].derivative(layer_values[j]), error)
+                    layer.update_weights(delta_weights, learning_rate)
+            print(self.predict(x_train, y_train))
 
     def predict(self, x_test, y_test):
-        for i, x in enumerate(x_test):
-            data = x
-            for j, layer in enumerate(self._layers):
-                data = layer.feedforward(data)
-            loss = self._loss_function.calculate(data, y_test[i])
+        data = x_test
+        for j, layer in enumerate(self._layers):
+            _, data = layer.feedforward(data)
+        loss = self._loss_function.calculate(data, y_test)
         return data, loss
 

@@ -2,21 +2,25 @@ import numpy as np
 import pandas as pd
 from promiseless.Architecture import Architecture
 from promiseless.layer import InputLayer, HiddenLayer
+from promiseless.activation import Sigmoid
 
 
 architecture = Architecture()\
-    .add_input_layer(InputLayer(23))\
-    .add_layer(HiddenLayer(456))\
-    .add_layer(HiddenLayer(3))
+    .add_input_layer(InputLayer(1))\
+    .add_layer(HiddenLayer(4))\
+    .add_layer(HiddenLayer(1))
 
 model = architecture.build_model()
 
 
-name = "data.simple.test.100"
-data = pd.read_csv("C:\\Users\\wojte\\OneDrive\\Dokumenty\\Studia\\Deep Learning\\projekt1\\classification\\{}.csv".format(name))
-x_train = data.loc[:, ["x","y"]]
+name = "data.activation.test.100"
+data = pd.read_csv("C:\\Users\\wojte\\OneDrive\\Dokumenty\\Studia\\Deep Learning\\projekt1\\regression\\{}.csv".format(name))
+x_train = data.loc[:, ["x"]]
 x_train = np.array(x_train)
-y_train = np.array(data.loc[:, "cls"])
+y_train = np.array(data.loc[:, ["y"]])
+
+
+model.train(x_train, y_train, batch_size=100)
 
 def create_batches(x_train, y_train, batch_size):
     '''

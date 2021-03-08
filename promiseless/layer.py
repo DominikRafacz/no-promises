@@ -31,16 +31,34 @@ class HiddenLayer:
     def out_size(self):
         return self._out_size
 
-    def feedforward(self, data):
+    def feedforward(self, data: np.ndarray):
         # add vector of ones to the data
         if self._bias:
             data = np.concatenate((
                 np.ones((data.shape[0], 1)),
                 data
-            ))
+            ), axis=1)
+        val = data @ self._weights
+        return val, self._activation.calculate(val)
 
-        # TODO: add applying of activation
-        return data * self._weights
+    def calculate_delta_weights(self, error, prev_values):
+        delta_weights = np.empty(self._weights.shape)
+        if self._bias:
+            for i in range(error.shape[0]):
+                delta_weights += np.concatenate((np.ones((1, 1)), prev_values[i].reshape(-1, 1))) @ error[i].reshape(1, -1)
+        else:
+            for i in range(error.shape[0]):
+                delta_weights += prev_values[i].reshape(-1, 1) @ error[i].reshape(1, -1)
+        return delta_weights
 
-    def backpropagate(self, data):
-        pass
+    def calculate_prev_error(self, prev_derivative, error):
+        if self._bias:
+            return error @ self._weights[1:, :].T * prev_derivative
+        else:
+            return error @ self._weights.T * prev_derivative
+
+    def update_weights(self, delta_weights, learning_rate):
+        self._weights -= delta_weights*learning_rate
+
+    def derivative(self, data):
+        return self._activation.derivative(data)
