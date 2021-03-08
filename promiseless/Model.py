@@ -11,7 +11,7 @@ class Model:
         self._training_history = np.empty(0)
 
     @staticmethod
-    def __create_batches(x_train, y_train, batch_size):
+    def __create_batches(x_train, y_train, batch_size, seed=1234):
         '''
         :param x_train: data in numpy array
         :param y_train: target in numpy array
@@ -19,6 +19,7 @@ class Model:
         :return: list of data batches and target batches
         '''
         n = len(x_train)
+        np.random.seed(seed)
         perm = np.random.permutation(n)
         new_x = x_train[perm]
         new_y = y_train[perm]
@@ -26,7 +27,7 @@ class Model:
         batches_y = [new_y[start:start + batch_size] for start in range(0, n, batch_size)]
         return batches_x, batches_y
 
-    def train(self, x_train: np.ndarray, y_train: np.ndarray, bias, batch_size, epochs, learning_rate, momentum, evaluation_dataset=None):
+    def train(self, x_train: np.ndarray, y_train: np.ndarray, batch_size=1, epochs=10, learning_rate=0.01, momentum=None, evaluation_dataset=None):
         for _ in range(epochs):
             batches_x, batches_y = self.__create_batches(x_train, y_train, batch_size)
             for h, x_train_batch in enumerate(batches_x):
