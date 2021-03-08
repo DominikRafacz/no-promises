@@ -1,6 +1,6 @@
 import numpy as np
-from layer import InputLayer, HiddenLayer
-from loss import LossFunction
+from promiseless.layer import InputLayer, HiddenLayer
+from promiseless.loss import LossFunction
 
 
 class Model:
@@ -26,7 +26,7 @@ class Model:
         batches_y = [new_y[start:start + batch_size] for start in range(0, n, batch_size)]
         return batches_x, batches_y
 
-    def train(self, x_train: np.ndarray, y_train: np.ndarray, batch_size, epochs, learning_rate, momentum, evaluation_dataset=None):
+    def train(self, x_train: np.ndarray, y_train: np.ndarray, bias, batch_size, epochs, learning_rate, momentum, evaluation_dataset=None):
         for _ in range(epochs):
             batches_x, batches_y = self.__create_batches(x_train, y_train, batch_size)
             for h, x_train_batch in enumerate(batches_x):
@@ -37,8 +37,14 @@ class Model:
                         data = layer.feedforward(data)
                     loss = self._loss_function.calculate(data, y_train_batch[i])
                     error = self._loss_function.derivative(data, y_train_batch[i])
-
+                    for j, layer in reversed(list(enumerate(self._layers))):
+                        error = layer.backpropagate(error)
 
     def predict(self, x_test, y_test):
-        pass
+        for i, x in enumerate(x_test):
+            data = x
+            for j, layer in enumerate(self._layers):
+                data = layer.feedforward(data)
+            loss = self._loss_function.calculate(data, y_test[i])
+        return data, loss
 
