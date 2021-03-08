@@ -11,26 +11,33 @@ class Model:
         self._training_history = np.empty(0)
 
     @staticmethod
-    def __create_batches(df, batch_size):
+    def __create_batches(x_train, y_train, batch_size):
         '''
-        :param df: numpy array
-        :param batch_size: size of the batches
-        :return: list of numpy arrays
+        :param x_train: data in numpy array
+        :param y_train: target in numpy array
+        :param batch_size: size of batches
+        :return: list of data batches and target batches
         '''
-        n = len(df)
-        new_df = df[np.random.permutation(n)]
-        batches = [new_df[start:start + batch_size] for start in range(0, n, batch_size)]
-        return batches
+        n = len(x_train)
+        perm = np.random.permutation(n)
+        new_x = x_train[perm]
+        new_y = y_train[perm]
+        batches_x = [new_x[start:start + batch_size] for start in range(0, n, batch_size)]
+        batches_y = [new_y[start:start + batch_size] for start in range(0, n, batch_size)]
+        return batches_x, batches_y
 
-    def train(self, x_train: np.ndarray, y_train: np.ndarray, bias, batch_size, epochs, learning_rate, momentum, evaluation_dataset=None):
-        batches = self.__create_batches(x_train, batch_size)
-        for batch in batches:
-            for i, x in enumerate(batch):
-                data = x
-                for j, layer in enumerate(self._layers):
-                    data = layer.feedforward(data)
-                loss = self._loss_function.calculate(data, y_train[i])
-                error = self._loss_function.derivative(data, y_train[i])
+    def train(self, x_train: np.ndarray, y_train: np.ndarray, batch_size, epochs, learning_rate, momentum, evaluation_dataset=None):
+        for _ in range(epochs):
+            batches_x, batches_y = self.__create_batches(x_train, y_train, batch_size)
+            for h, x_train_batch in enumerate(batches_x):
+                y_train_batch = batches_y[h]
+                for i, x in enumerate(x_train_batch):
+                    data = x
+                    for j, layer in enumerate(self._layers):
+                        data = layer.feedforward(data)
+                    loss = self._loss_function.calculate(data, y_train_batch[i])
+                    error = self._loss_function.derivative(data, y_train_batch[i])
+
 
     def predict(self, x_test, y_test):
         pass
