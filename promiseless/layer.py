@@ -58,7 +58,7 @@ class HiddenLayer:
             return error @ self._weights.T * prev_derivative
 
     def update_weights(self, delta_weights, learning_rate):
-        self._weights -= delta_weights*learning_rate
+        self._weights -= delta_weights * learning_rate
 
     def derivative(self, data):
         return self._activation.derivative(data)

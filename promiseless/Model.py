@@ -36,10 +36,11 @@ class Model:
                 for j, layer in enumerate(self._layers):
                     layer_values[j+1], data_x = layer.feedforward(data_x)
                 loss = self._loss_function.calculate(data_x, data_y)
-                error = self._loss_function.derivative(data_x, data_y) * (data_x - data_y)
+                error = self._loss_function.derivative(data_x, data_y) * self._layers[-1].derivative(layer_values[-1])
                 for j, layer in reversed(list(enumerate(self._layers))):
                     delta_weights = layer.calculate_delta_weights(error, layer_values[j])
-                    error = layer.calculate_prev_error(self._layers[j-1].derivative(layer_values[j]), error)
+                    if j != 0:
+                        error = layer.calculate_prev_error(self._layers[j-1].derivative(layer_values[j]), error)
                     layer.update_weights(delta_weights, learning_rate)
             print(self.predict(x_train, y_train))
 
