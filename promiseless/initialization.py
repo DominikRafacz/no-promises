@@ -1,4 +1,4 @@
-from numpy.random import normal
+from numpy.random import random
 
 
 class RandomInitialization:
@@ -7,4 +7,4 @@ class RandomInitialization:
 
     @staticmethod
     def perform(shape):
-        return normal(size=shape)
+        return random(shape)
