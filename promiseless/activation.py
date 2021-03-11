@@ -1,27 +1,41 @@
-import numpy as np
+import numpy
 
 
-class LinearActivation:
-    def __init__(self):
+class ActivationFunction:
+    @staticmethod
+    def calculate(data: numpy.ndarray):
         pass
 
     @staticmethod
-    def calculate(data):
+    def derivative(data: numpy.ndarray):
+        pass
+
+
+class LinearActivation(ActivationFunction):
+    @staticmethod
+    def calculate(data: numpy.ndarray):
         return data
 
     @staticmethod
-    def derivative(data):
-        return np.ones(data.shape)
+    def derivative(data: numpy.ndarray):
+        return numpy.ones(data.shape)
 
 
-class Sigmoid:
-    def __init__(self):
-        pass
+class Sigmoid(ActivationFunction):
+    @staticmethod
+    def calculate(data: numpy.ndarray):
+        return 1 / (1 + numpy.exp(-data))
 
     @staticmethod
-    def calculate(data):
-        return 1 / (1 + np.exp(-data))
+    def derivative(data: numpy.ndarray):
+        return Sigmoid.calculate(data) * (1 - Sigmoid.calculate(data))
+
+
+class ReLU(ActivationFunction):
+    @staticmethod
+    def calculate(data: numpy.ndarray):
+        return numpy.where(data < 0, 0, data)
 
     @staticmethod
-    def derivative(data):
-        return Sigmoid.calculate(data)*(1-Sigmoid.calculate(data))
+    def derivative(data: numpy.ndarray):
+        return numpy.where(data < 0, 0, 1)

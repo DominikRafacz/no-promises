@@ -1,27 +1,29 @@
-from promiseless.initialization import RandomInitialization
-from promiseless.loss import MSE
+from typing import Type, Union
+from promiseless.initialization import RandomInitialization, InitializationMethod
+from promiseless.loss import MSE, LossFunction
 from promiseless.Model import Model
+from promiseless.layer import InputLayer, HiddenLayer
 
 
 class Architecture:
     def __init__(self):
-        self._input_layer = None
-        self._layers = []
-        self._init_method = RandomInitialization()
-        self._loss_function = MSE()
+        self._input_layer: Union[InputLayer, None] = None
+        self._layers: list[HiddenLayer] = []
+        self._init_method: Type[InitializationMethod] = RandomInitialization
+        self._loss_function: Type[LossFunction] = MSE
 
-    def add_input_layer(self, input_layer):
+    def add_input_layer(self, input_layer: InputLayer):
         self._input_layer = input_layer
         return self
 
-    def add_layer(self, layer):
+    def add_layer(self, layer: HiddenLayer):
         self._layers.append(layer)
         return self
 
-    def set_initialization_method(self, initialization_method):
+    def set_initialization_method(self, initialization_method: Type[InitializationMethod]):
         self._init_method = initialization_method
 
-    def set_loss_function(self, loss_function):
+    def set_loss_function(self, loss_function: Type[LossFunction]):
         self._loss_function = loss_function
         return self
 

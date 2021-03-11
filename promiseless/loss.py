@@ -1,27 +1,21 @@
-import numpy as np
+import numpy
 
 
 class LossFunction:
-    def __init__(self):
+    @staticmethod
+    def calculate(prediction: numpy.ndarray, target: numpy.ndarray):
         pass
 
     @staticmethod
-    def calculate(prediction, target):
-        pass
-
-    @staticmethod
-    def derivative(prediction, target):
+    def derivative(prediction: numpy.ndarray, target: numpy.ndarray):
         pass
 
 
 class MSE(LossFunction):
-    def __init__(self):
-        super().__init__()
+    @staticmethod
+    def calculate(prediction: numpy.ndarray, target: numpy.ndarray):
+        return numpy.sum((prediction - target) ** 2, axis=0) / prediction.shape[0]
 
     @staticmethod
-    def calculate(prediction, target):
-        return np.sum((prediction - target)**2, axis=0)/prediction.shape[0]
-
-    @staticmethod
-    def derivative(prediction, target):
-        return 2*(prediction - target)/prediction.shape[0]
+    def derivative(prediction: numpy.ndarray, target: numpy.ndarray):
+        return 2 * (prediction - target) / prediction.shape[0]

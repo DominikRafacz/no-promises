@@ -1,10 +1,13 @@
 from numpy.random import random
 
 
-class RandomInitialization:
-    def __init__(self):
+class InitializationMethod:
+    @staticmethod
+    def perform(shape):
         pass
 
+
+class RandomInitialization(InitializationMethod):
     @staticmethod
     def perform(shape):
         return random(shape)
