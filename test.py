@@ -21,7 +21,7 @@ mdl = Architecture()\
     .add_layer(HiddenLayer(1))\
     .build_model()
 
-loss1 = mdl.train(x_train, y_train, batch_size=10, learning_rate=10e-4, epochs=100)
+loss1 = mdl.train(x_train, y_train, batch_size=100, learning_rate=10e-4, epochs=100)
 
 np.random.seed(123)
 mdl2 = Architecture()\
