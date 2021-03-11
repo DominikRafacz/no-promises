@@ -5,37 +5,26 @@ from promiseless.layer import InputLayer, HiddenLayer
 from promiseless.activation import Sigmoid
 
 
-architecture = Architecture()\
-    .add_input_layer(InputLayer(1))\
-    .add_layer(HiddenLayer(4))\
-    .add_layer(HiddenLayer(1))
-
-model = architecture.build_model()
-
-
 name = "data.activation.test.100"
-data = pd.read_csv("C:\\Users\\wojte\\OneDrive\\Dokumenty\\Studia\\Deep Learning\\projekt1\\regression\\{}.csv".format(name))
+data = pd.read_csv("~/Desktop/projekt1/regression/{}.csv".format(name))
 x_train = data.loc[:, ["x"]]
 x_train = np.array(x_train)
+x_train = (x_train - x_train.mean()) / x_train.std()
 y_train = np.array(data.loc[:, ["y"]])
+y_train = (y_train - y_train.mean()) / y_train.std()
 
+np.random.seed(123)
 
-model.train(x_train, y_train, batch_size=100)
+mdl = Architecture()\
+    .add_input_layer(InputLayer(1))\
+    .add_layer(HiddenLayer(5, activation=Sigmoid))\
+    .add_layer(HiddenLayer(1))\
+    .build_model()
 
-def create_batches(x_train, y_train, batch_size):
-    '''
-    :param x_train: data in numpy array
-    :param y_train: target in numpy array
-    :param batch_size: size of batches
-    :return: list of data batches and target batches
-    '''
-    n = len(x_train)
-    perm = np.random.permutation(n)
-    new_x = x_train[perm]
-    new_y = y_train[perm]
-    batches_x = [new_x[start:start + batch_size] for start in range(0, n, batch_size)]
-    batches_y = [new_y[start:start + batch_size] for start in range(0, n, batch_size)]
-    return batches_x, batches_y
+mdl.train(x_train, y_train, batch_size=10000, learning_rate=10e-4, epochs=100)
 
+####
+from plotnine import ggplot, aes, geom_point
+from pandas import DataFrame
 
-batches_x, batches_y = create_batches(x_train, y_train, 10)
+ggplot(DataFrame(np.concatenate((x_train, y_train), axis=1), columns=("x", "y"))) + aes(x="x", y="y") + geom_point()
