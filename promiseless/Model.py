@@ -9,7 +9,7 @@ class Model:
         self._input_layer = input_layer
         self._layers = layers
         self._loss_function = loss_function
-        self._training_history = numpy.empty(0)
+        self._training_history = []
 
     @staticmethod
     def __create_batches(x_train, y_train, batch_size):
@@ -28,7 +28,6 @@ class Model:
         return batches_x, batches_y
 
     def train(self, x_train: numpy.ndarray, y_train: numpy.ndarray, batch_size=1, epochs=10, learning_rate=0.01, momentum_lambda=0, evaluation_dataset: Union[Tuple[numpy.ndarray], None] = None):
-        epoch_loss = [None]*epochs
         momentum = [numpy.zeros(layer.shape) for layer in self._layers]
         for ep in range(epochs):
             batches_x, batches_y = self.__create_batches(x_train, y_train, batch_size)
@@ -37,7 +36,6 @@ class Model:
                 layer_values[0] = data_x
                 for j, layer in enumerate(self._layers):
                     layer_values[j + 1], data_x = layer.feedforward(data_x)
-                loss = self._loss_function.calculate(x_train, y_train)
                 error = self._loss_function.derivative(data_x, data_y) * self._layers[-1].derivative(
                     layer_values[-1])
                 for j, layer in reversed(list(enumerate(self._layers))):
@@ -46,9 +44,11 @@ class Model:
                     if j != 0:
                         error = layer.calculate_prev_error(self._layers[j - 1].derivative(layer_values[j]), error)
                     layer.update_weights(momentum[j], learning_rate)
-            epoch_loss[ep] = self.predict(x_train, y_train)[1]
-            print(epoch_loss[ep])
-        return epoch_loss
+            train_loss = self.predict(x_train, y_train)[1]
+            if evaluation_dataset:
+                eval_loss = self.predict(evaluation_dataset[0], evaluation_dataset[1])[1]
+                self._training_history.append(numpy.array([train_loss, eval_loss]))
+            self._training_history.append(numpy.array([train_loss, None]))
 
     def predict(self, x_test: numpy.ndarray, y_test: numpy.ndarray):
         data = x_test
