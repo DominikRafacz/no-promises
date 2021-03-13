@@ -18,7 +18,7 @@ def read_data(task, dataset_name):
         x_train = data.loc[:, ["x", "y"]]
         x_train = np.array(x_train)
         x_train = (x_train - x_train.mean(axis=0)) / x_train.std(axis=0)
-        y_train = np.array(data.loc[:, ["cls"]])
+        y_train = np.array(pd.get_dummies(data.loc[:, "cls"]))
     else:
         print("Unknown task")
         x_train = data
@@ -46,7 +46,8 @@ mdl = Architecture()\
     .add_layer(HiddenLayer(1))\
     .build_model()
 
-loss1 = mdl.train(x_train, y_train, batch_size=10, learning_rate=10e-4, epochs=100)
+mdl.train(x_train, y_train, batch_size=100, learning_rate=10e-4, epochs=100)
+mdl.training_history
 
 res, _ = mdl.predict(x_train, y_train)
 plt.scatter(x_train, res)
@@ -59,7 +60,7 @@ mdl2 = Architecture()\
     .add_layer(HiddenLayer(1))\
     .build_model()
 
-loss2 = mdl2.train(x_train, y_train, batch_size=100, learning_rate=10e-4, epochs=50, momentum_lambda=0.9)
+loss2 = mdl2.train(x_train, y_train, batch_size=100, learning_rate=10e-4, epochs=100, momentum_lambda=0.9)
 res2, _ = mdl2.predict(x_train, y_train)
 plt.scatter(x_train, res2)
 plt.show()
@@ -72,7 +73,7 @@ ggplot(DataFrame(np.concatenate((x_train, y_train), axis=1), columns=("x", "y"))
 
 
 plt.plot(range(10,101), loss1[9:], label="Without momentum")
-plt.plot(range(10,51), loss2[9:], label="With momentum")
+plt.plot(range(10,41), loss2[9:], label="With momentum")
 plt.title("Loss")
 plt.legend()
 plt.show()

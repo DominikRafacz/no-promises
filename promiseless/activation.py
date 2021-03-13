@@ -49,3 +49,14 @@ class Tanh(ActivationFunction):
     @staticmethod
     def derivative(data: numpy.ndarray):
         return 1 - numpy.tanh(data) ** 2
+
+
+class Softmax(ActivationFunction):
+    @staticmethod
+    def calculate(data: numpy.ndarray):
+        data = numpy.exp(data)
+        return data/(numpy.sum(data, axis=0).resape(-1, 1) @ numpy.ones(1, data.shape[1]))
+
+    @staticmethod
+    def derivative(data: numpy.ndarray):
+        return
