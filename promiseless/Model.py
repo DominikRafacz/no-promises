@@ -9,7 +9,7 @@ class Model:
         self._input_layer = input_layer
         self._layers = layers
         self._loss_function = loss_function
-        self._training_history = []
+        self.training_history = []
 
     @staticmethod
     def __create_batches(x_train, y_train, batch_size):
