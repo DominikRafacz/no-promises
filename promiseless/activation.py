@@ -39,3 +39,13 @@ class ReLU(ActivationFunction):
     @staticmethod
     def derivative(data: numpy.ndarray):
         return numpy.where(data < 0, 0, 1)
+
+
+class Tanh(ActivationFunction):
+    @staticmethod
+    def calculate(data: numpy.ndarray):
+        return numpy.tanh(data)
+
+    @staticmethod
+    def derivative(data: numpy.ndarray):
+        return 1 - numpy.tanh(data) ** 2
