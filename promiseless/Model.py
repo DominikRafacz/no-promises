@@ -1,5 +1,5 @@
 import numpy
-from typing import Type
+from typing import Type, Tuple, Union
 from promiseless.layer import InputLayer, HiddenLayer
 from promiseless.loss import LossFunction
 
@@ -27,45 +27,27 @@ class Model:
         batches_y = [new_y[start:start + batch_size] for start in range(0, n, batch_size)]
         return batches_x, batches_y
 
-    def train(self, x_train: numpy.ndarray, y_train: numpy.ndarray, batch_size=1, epochs=10, learning_rate=0.01, momentum_lambda=None, evaluation_dataset=None):
+    def train(self, x_train: numpy.ndarray, y_train: numpy.ndarray, batch_size=1, epochs=10, learning_rate=0.01, momentum_lambda=0, evaluation_dataset: Union[Tuple[numpy.ndarray], None] = None):
         epoch_loss = [None]*epochs
-        if momentum_lambda:
-            momentum = [numpy.zeros(layer._weights.shape) for layer in self._layers]
-            for ep in range(epochs):
-                batches_x, batches_y = self.__create_batches(x_train, y_train, batch_size)
-                for data_x, data_y in zip(batches_x, batches_y):
-                    layer_values = [None] * (len(self._layers) + 1)
-                    layer_values[0] = data_x
-                    for j, layer in enumerate(self._layers):
-                        layer_values[j + 1], data_x = layer.feedforward(data_x)
-                    loss = self._loss_function.calculate(x_train, y_train)
-                    error = self._loss_function.derivative(data_x, data_y) * self._layers[-1].derivative(
-                        layer_values[-1])
-                    for j, layer in reversed(list(enumerate(self._layers))):
-                        delta_weights = layer.calculate_delta_weights(error, layer_values[j])
-                        momentum[j] = momentum_lambda * momentum[j] + (1 - momentum_lambda) * delta_weights
-                        if j != 0:
-                            error = layer.calculate_prev_error(self._layers[j - 1].derivative(layer_values[j]), error)
-                        layer.update_weights(momentum[j], learning_rate)
-                epoch_loss[ep] = self.predict(x_train, y_train)[1]
-                print(epoch_loss[ep])
-        else:
-            for ep in range(epochs):
-                batches_x, batches_y = self.__create_batches(x_train, y_train, batch_size)
-                for data_x, data_y in zip(batches_x, batches_y):
-                    layer_values = [None]*(len(self._layers)+1)
-                    layer_values[0] = data_x
-                    for j, layer in enumerate(self._layers):
-                        layer_values[j+1], data_x = layer.feedforward(data_x)
-                    loss = self._loss_function.calculate(x_train, y_train)
-                    error = self._loss_function.derivative(data_x, data_y) * self._layers[-1].derivative(layer_values[-1])
-                    for j, layer in reversed(list(enumerate(self._layers))):
-                        delta_weights = layer.calculate_delta_weights(error, layer_values[j])
-                        if j != 0:
-                            error = layer.calculate_prev_error(self._layers[j-1].derivative(layer_values[j]), error)
-                        layer.update_weights(delta_weights, learning_rate)
-                epoch_loss[ep] = self.predict(x_train, y_train)[1]
-                print(epoch_loss[ep])
+        momentum = [numpy.zeros(layer.shape) for layer in self._layers]
+        for ep in range(epochs):
+            batches_x, batches_y = self.__create_batches(x_train, y_train, batch_size)
+            for data_x, data_y in zip(batches_x, batches_y):
+                layer_values = [None] * (len(self._layers) + 1)
+                layer_values[0] = data_x
+                for j, layer in enumerate(self._layers):
+                    layer_values[j + 1], data_x = layer.feedforward(data_x)
+                loss = self._loss_function.calculate(x_train, y_train)
+                error = self._loss_function.derivative(data_x, data_y) * self._layers[-1].derivative(
+                    layer_values[-1])
+                for j, layer in reversed(list(enumerate(self._layers))):
+                    delta_weights = layer.calculate_delta_weights(error, layer_values[j])
+                    momentum[j] = momentum_lambda * momentum[j] + (1 - momentum_lambda) * delta_weights
+                    if j != 0:
+                        error = layer.calculate_prev_error(self._layers[j - 1].derivative(layer_values[j]), error)
+                    layer.update_weights(momentum[j], learning_rate)
+            epoch_loss[ep] = self.predict(x_train, y_train)[1]
+            print(epoch_loss[ep])
         return epoch_loss
 
     def predict(self, x_test: numpy.ndarray, y_test: numpy.ndarray):
