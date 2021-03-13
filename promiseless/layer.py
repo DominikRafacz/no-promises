@@ -22,6 +22,7 @@ class HiddenLayer:
         self._bias = bias
         self._weights = None
         self._in_size = None
+        self.shape = None
 
     def build(self, in_size: int, initialization_method: Type[InitializationMethod]):
         ret = copy.deepcopy(self)
@@ -30,6 +31,7 @@ class HiddenLayer:
             ret._in_size if not ret._bias else ret._in_size + 1,
             ret._out_size
         ))
+        ret._shape = ret._weights.shape
         return ret
 
     def out_size(self):
