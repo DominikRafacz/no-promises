@@ -50,10 +50,17 @@ class Model:
             print(epoch_loss[ep])
         return epoch_loss
 
-    def predict(self, x_test: numpy.ndarray, y_test: numpy.ndarray):
+    def predict(self, x_test: numpy.ndarray, y_test: Union[numpy.ndarray, None] = None, return_class: bool = False):
         data = x_test
         for j, layer in enumerate(self._layers):
             _, data = layer.feedforward(data)
-        loss = self._loss_function.calculate(data, y_test)
-        return data, loss
+        if y_test is not None:
+            loss = self._loss_function.calculate(data, y_test)
+            if return_class:
+                return data.argmax(axis=1).reshape([-1, 1]), loss
+            return data, loss
+        else:
+            if return_class:
+                return data.argmax(axis=1).reshape([-1, 1])
+            return data
 
