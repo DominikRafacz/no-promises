@@ -9,7 +9,7 @@ class Model:
         self._input_layer = input_layer
         self._layers = layers
         self._loss_function = loss_function
-        self.training_history = []
+        self.training_history = ([], [])
 
     @staticmethod
     def __create_batches(x_train, y_train, batch_size):
@@ -45,10 +45,10 @@ class Model:
                         error = layer.calculate_prev_error(self._layers[j - 1].derivative(layer_values[j]), error)
                     layer.update_weights(momentum[j], learning_rate)
             train_loss = self.predict(x_train, y_train)[1]
+            self.training_history[0].append(train_loss)
             if evaluation_dataset:
                 eval_loss = self.predict(evaluation_dataset[0], evaluation_dataset[1])[1]
-                self.training_history.append(numpy.array([train_loss, eval_loss]))
-            self.training_history.append(numpy.array([train_loss, None]))
+                self.training_history[1].append(eval_loss)
 
     def predict(self, x_test: numpy.ndarray, y_test: Union[numpy.ndarray, None] = None, return_class: bool = False):
         data = x_test
