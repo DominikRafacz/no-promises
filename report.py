@@ -86,6 +86,21 @@ def visualize_results(x_test, result, y_test, task):
 visualize_results(x_test, res, y_test, "regression")
 visualize_results(x_train2, res2, y_train2, "classification")
 
+
+def visualize_loss(model):
+    plt.figure()
+    plt.plot(range(1, len(model.training_history[0])+1), model.training_history[0], label="Training set")
+    if len(model.training_history[1]):
+        plt.plot(range(1, len(model.training_history[1])+1), model.training_history[1], label="Evaluation set")
+    plt.title("Loss during training")
+    plt.xlabel("Number of epoch")
+    plt.ylabel("Loss")
+    plt.legend()
+    plt.show()
+
+
+visualize_loss(mdl_classif)
+
 plt.scatter(x_test, res)
 plt.show()
 print(mdl.training_history)
