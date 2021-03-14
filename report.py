@@ -6,6 +6,7 @@ from promiseless.layer import InputLayer, HiddenLayer
 from promiseless.activation import Sigmoid, ReLU
 from promiseless.loss import CategoricalCrossEntropy
 
+
 def read_data(task, dataset_name):
     data = pd.read_csv("data/{0}/{1}.csv".format(task, dataset_name))
     if task == "regression":
@@ -62,24 +63,23 @@ res2, loss2 = mdl_classif.predict(x_train2, y_train2, return_class=True)
 
 def visualize_results(x_test, result, y_test, task):
     if task == "regression":
-        fig, ax = plt.subplots()
-        ax.plot(x_test, result, label="Fitted values")
-        ax.plot(x_test, y_test, label="Original values")
-        legend = ax.legend()
-        ax.set_title("Fitted test set")
-        # ax.xlabel("X")
-        # ax.ylabel("Y")
+        plt.figure()
+        plt.plot(x_test, result, label="Fitted values")
+        plt.plot(x_test, y_test, label="Original values")
+        plt.title("Fitted vs original")
+        plt.xlabel("x")
+        plt.ylabel("y")
+        plt.legend()
         plt.show()
     elif task == "classification":
-        fig, (ax1, ax2) = plt.subplots(1,2)
-        ax1.scatter(x_test[:,0], x_test[:,1], c=result)
-        ax1.set_title("Fitted test set")
-        # ax1.xlabel("X")
-        # ax1.ylabel("Y")
-        ax2.scatter(x_test[:,0], x_test[:,1], c=y_test-1)
-        ax2.set_title("Original test set")
-        # ax2.xlabel("X")
-        # ax2.ylabel("Y")
+        plt.figure()
+        plt.subplot(121)
+        plt.scatter(x_test[:, 0], x_test[:, 1], c=result)
+        plt.title("Fitted test set")
+
+        plt.subplot(122)
+        plt.scatter(x_test[:, 0], x_test[:, 1], c=np.argmax(y_test, axis=1))
+        plt.title("Original test set")
         plt.show()
 
 
