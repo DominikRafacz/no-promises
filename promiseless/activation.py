@@ -55,7 +55,7 @@ class Softmax(ActivationFunction):
     @staticmethod
     def calculate(data: numpy.ndarray):
         data = numpy.exp(data)
-        return data/(numpy.sum(data, axis=0).resape(-1, 1) @ numpy.ones(1, data.shape[1]))
+        return data/numpy.sum(data, axis=1)
 
     @staticmethod
     def derivative(data: numpy.ndarray):
