@@ -1,10 +1,9 @@
 import numpy as np
-import pandas as pd
-from promiseless.Architecture import Architecture
+from promiseless.architecture import Architecture
 from promiseless.layer import InputLayer, HiddenLayer
 from promiseless.activation import Sigmoid, ReLU, Tanh, Softmax, LinearActivation
 from promiseless.loss import CategoricalCrossEntropy, MSE, MAE
-from promiseless.functions import read_data, visualize_loss, visualize_results
+from promiseless.util import read_data, visualize_loss, visualize_results
 
 
 
