@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-
+plt.ioff()
 
 def read_data(task, dataset_name):
     data = pd.read_csv("data/{0}/{1}.csv".format(task, dataset_name))
@@ -23,30 +23,32 @@ def read_data(task, dataset_name):
     return x_train, y_train
 
 
-def visualize_results(x_test, result, y_test, task):
+def visualize_results(x_test, result, y_test, task, filename=None):
+    fig = plt.figure()
     if task == "regression":
-        plt.figure()
         plt.plot(x_test, result, label="Fitted values")
         plt.plot(x_test, y_test, label="Original values")
         plt.title("Fitted vs original")
         plt.xlabel("x")
         plt.ylabel("y")
         plt.legend()
-        plt.show()
     elif task == "classification":
-        plt.figure()
         plt.subplot(121)
-        plt.scatter(x_test[:, 0], x_test[:, 1], c=result)
-        plt.title("Fitted test set")
-
-        plt.subplot(122)
         plt.scatter(x_test[:, 0], x_test[:, 1], c=np.argmax(y_test, axis=1))
         plt.title("Original test set")
+
+        plt.subplot(122)
+        plt.scatter(x_test[:, 0], x_test[:, 1], c=result)
+        plt.title("Fitted test set")
+    if filename:
+        plt.savefig("plots/{}_{}".format(filename, task[:4]))
+        plt.close(fig)
+    else:
         plt.show()
 
 
-def visualize_loss(model):
-    plt.figure()
+def visualize_loss(model, filename=None):
+    fig = plt.figure()
     plt.plot(range(1, len(model.training_history[0])+1), model.training_history[0], label="Training set")
     if len(model.training_history[1]):
         plt.plot(range(1, len(model.training_history[1])+1), model.training_history[1], label="Evaluation set")
@@ -54,4 +56,9 @@ def visualize_loss(model):
     plt.xlabel("Number of epoch")
     plt.ylabel("Loss")
     plt.legend()
-    plt.show()
+    if filename:
+        plt.savefig("plots/{}_loss".format(filename))
+        plt.close(fig)
+    else:
+        plt.show()
+
