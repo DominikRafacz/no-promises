@@ -3,8 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 plt.ioff()
 
-def read_data(task, dataset_name):
-    data = pd.read_csv("data/{0}/{1}.csv".format(task, dataset_name))
+def read_data(task, dataset_name, path_to_data=""):
+    data = pd.read_csv("{0}data/{1}/{2}.csv".format(path_to_data, task, dataset_name))
     if task == "regression":
         x_train = data.loc[:, ["x"]]
         x_train = np.array(x_train)
@@ -62,3 +62,20 @@ def visualize_loss(model, filename=None):
     else:
         plt.show()
 
+
+def visualize_losses(models, labels=None, data="train", filename=None):
+    fig = plt.figure()
+    if not labels:
+        labels = ["Model {0}".format(j) for j in range(1, len(models)+1)]
+    for model, label in zip(models, labels):
+        i = 0 if data == "train" else 1
+        plt.plot(range(1, len(model.training_history[i])+1), model.training_history[i], label="{0}".format(label))
+        plt.title("Loss during training")
+        plt.xlabel("Number of epoch")
+        plt.ylabel("Loss")
+        plt.legend()
+    if filename:
+        plt.savefig("plots/{}_loss".format(filename))
+        plt.close(fig)
+    else:
+        plt.show()
