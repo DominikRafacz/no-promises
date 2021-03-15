@@ -104,6 +104,12 @@ cce_der = truth/(-soft_test)
 cce_der @ soft_der
 soft_test - truth
 # it works only for single row
+# new test
+soft_der = Softmax.derivative(test)
+cce_der = CategoricalCrossEntropy.derivative(soft_test, truth)
+print(cce_der * soft_der)
+
+
 
 for i, row in enumerate(t):
     row = row.reshape(1,-1)

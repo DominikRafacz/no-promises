@@ -6,9 +6,6 @@ from promiseless.activation import Sigmoid, ReLU, Tanh, Softmax, LinearActivatio
 from promiseless.loss import CategoricalCrossEntropy, MSE, MAE
 from promiseless.functions import read_data, visualize_loss, visualize_results
 
-
-
-
 name = "data.cube.train.100"
 x_train, y_train = read_data("regression", name)
 x_test, y_test = read_data("regression", "data.cube.test.100")
@@ -25,10 +22,11 @@ mdl = Architecture()\
     .add_layer(HiddenLayer(1))\
     .build_model()
 
-mdl.train(x_train, y_train, batch_size=100, learning_rate=10e-4, epochs=100, evaluation_dataset=(x_test, y_test))
+
+mdl.train(x_train, y_train, batch_size=10, learning_rate=10e-4, epochs=100, evaluation_dataset=(x_test, y_test))
 
 res, loss = mdl.predict(x_test, y_test)
-
+'''
 task = "regression"
 activations = [Tanh, ReLU, Sigmoid]
 batches = [1, 10, 100, 500]
@@ -68,7 +66,7 @@ for hidden_layer in hidden_layers:
 
 
 
-
+'''
 
 visualize_results(x_test, res, y_test, "regression", "test2")
 visualize_results(x_test, res, y_test, "regression")
