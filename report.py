@@ -3,15 +3,17 @@ from promiseless.architecture import Architecture
 from promiseless.layer import InputLayer, HiddenLayer
 from promiseless.activation import Sigmoid, ReLU, Tanh, Softmax, LinearActivation
 from promiseless.loss import CategoricalCrossEntropy, MSE, MAE
-from promiseless.util import read_data, visualize_loss, visualize_results, visualize_losses
+from promiseless.util import read_data, visualize_loss, visualize_results, visualize_losses, visualize_results2
 
-name = "data.cube.train.100"
+name = "data.activation.train.1000"
 x_train, y_train = read_data("regression", name)
-x_test, y_test = read_data("regression", "data.cube.test.100")
+x_test, y_test = read_data("regression", "data.activation.test.1000")
 
 
-name2 = "data.simple.train.100"
+name2 = "data.three_gauss.train.100"
 x_train2, y_train2 = read_data("classification", name2)
+name2 = "data.three_gauss.test.100"
+x_test2, y_test2 = read_data("classification", name2)
 
 
 task = "regression"
@@ -22,7 +24,9 @@ loss_functions = [MSE, MAE]
 layer_sizes = [2, 5, 10]
 
 models = []
-for activation in activations:
+res = [None]*4
+for i, activation in enumerate(activations):
+    np.random.seed(1234)
     mdl = Architecture()\
         .add_input_layer(InputLayer(1))\
         .add_layer(HiddenLayer(5, activation=activation))\
@@ -30,11 +34,30 @@ for activation in activations:
         .add_layer(HiddenLayer(1, activation=LinearActivation))\
         .build_model()
     mdl.train(x_train, y_train, 5, 50, 0.001, evaluation_dataset=(x_test, y_test))
-    res, loss = mdl.predict(x_test, y_test)
-    # visualize_results(x_test, res, y_test, "regression")
+    res[i], loss = mdl.predict(x_test, y_test)
     models.append(mdl)
 
+visualize_losses(models, labels=["LinearActivation", "Tanh", "ReLU", "Sigmoid"], data="train")
 visualize_losses(models, labels=["LinearActivation", "Tanh", "ReLU", "Sigmoid"], data="test")
+visualize_results2(x_test, res, y_test, "regression",labels=["LinearActivation", "Tanh", "ReLU", "Sigmoid"])
+
+models = []
+res = [None]*4
+for i, activation in enumerate(activations):
+    np.random.seed(1234)
+    mdl = Architecture()\
+        .add_input_layer(InputLayer(2))\
+        .add_layer(HiddenLayer(5, activation=activation))\
+        .add_layer(HiddenLayer(5, activation=activation))\
+        .add_layer(HiddenLayer(3, activation=Softmax))\
+        .build_model()
+    mdl.train(x_train2, y_train2, 10, 100, 0.01, evaluation_dataset=(x_test2, y_test2))
+    res[i], loss = mdl.predict(x_test2, y_test2, return_class=True)
+    # visualize_results(x_test2, res, y_test2, "classification")
+    models.append(mdl)
+
+visualize_losses(models, labels=["LinearActivation", "Tanh", "ReLU", "Sigmoid"], data="train")
+visualize_results2(x_test2, res, y_test2, "classification",labels=["LinearActivation", "Tanh", "ReLU", "Sigmoid"])
 # for hidden_layer in hidden_layers:
 #     for activation in activations:
 #         for loss_function in loss_functions:

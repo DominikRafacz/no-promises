@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import math
 import matplotlib.pyplot as plt
 plt.ioff()
 
@@ -76,6 +77,35 @@ def visualize_losses(models, labels=None, data="train", filename=None):
         plt.legend()
     if filename:
         plt.savefig("plots/{}_loss".format(filename))
+        plt.close(fig)
+    else:
+        plt.show()
+
+
+def visualize_results2(x_test, results, y_test, task, labels=None, filename=None):
+    fig = plt.figure()
+    n = len(results)
+    if not labels:
+        labels = ["Model {0}".format(j) for j in range(1, n+1)]
+    if task == "regression":
+        for result, label in zip(results, labels):
+            plt.plot(x_test, result, label="{}".format(label))
+        plt.plot(x_test, y_test, label="Original values", linewidth=4.0)
+        plt.title("Fitted vs original")
+        plt.xlabel("x")
+        plt.ylabel("y")
+        plt.legend()
+    elif task == "classification":
+        m = n//3 + 1
+        plt.subplot(m,3,1)
+        plt.scatter(x_test[:, 0], x_test[:, 1], c=np.argmax(y_test, axis=1))
+        plt.title("Original test set")
+        for i in range(2, n+2):
+            plt.subplot(m,3,i)
+            plt.scatter(x_test[:, 0], x_test[:, 1], c=results[i-2])
+            plt.title("{0}".format(labels[i-2]))
+    if filename:
+        plt.savefig("plots/{}_{}".format(filename, task[:4]))
         plt.close(fig)
     else:
         plt.show()
