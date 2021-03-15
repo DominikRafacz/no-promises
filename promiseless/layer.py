@@ -48,7 +48,7 @@ class HiddenLayer:
         return val, self._activation.calculate(val)
 
     def calculate_delta_weights(self, error: numpy.ndarray, prev_values: numpy.ndarray):
-        delta_weights = numpy.empty(self._weights.shape)
+        delta_weights = numpy.zeros(self._weights.shape)
         if self._bias:
             for i in range(error.shape[0]):
                 delta_weights += numpy.concatenate((numpy.ones((1, 1)), prev_values[i].reshape(-1, 1))) @ error[i].reshape(1, -1)
