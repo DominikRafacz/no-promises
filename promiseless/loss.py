@@ -14,7 +14,7 @@ class LossFunction:
 class MSE(LossFunction):
     @staticmethod
     def calculate(prediction: numpy.ndarray, target: numpy.ndarray):
-        return numpy.sum((prediction - target) ** 2, axis=0) / prediction.shape[0]
+        return numpy.sum((prediction - target) ** 2) / prediction.shape[0]
 
     @staticmethod
     def derivative(prediction: numpy.ndarray, target: numpy.ndarray):
@@ -24,7 +24,7 @@ class MSE(LossFunction):
 class MAE(LossFunction):
     @staticmethod
     def calculate(prediction: numpy.ndarray, target: numpy.ndarray):
-        return numpy.sum(numpy.abs(prediction - target), axis=0) / prediction.shape[0]
+        return numpy.sum(numpy.abs(prediction - target)) / prediction.shape[0]
 
     @staticmethod
     def derivative(prediction: numpy.ndarray, target: numpy.ndarray):
@@ -34,8 +34,9 @@ class MAE(LossFunction):
 class CategoricalCrossEntropy(LossFunction):
     @staticmethod
     def calculate(prediction: numpy.ndarray, target: numpy.ndarray):
-        return -numpy.sum(target * numpy.log(1e-15 + prediction), axis=0) / prediction.shape[0]
+        return -numpy.sum(target * numpy.log(0.005 + prediction)) / prediction.shape[0]
 
     @staticmethod
     def derivative(prediction: numpy.ndarray, target: numpy.ndarray):
-        return -numpy.sum(prediction / target, axis=0) / prediction.shape[0]
+        #return target / (1e-6 + prediction) / prediction.shape[0]
+        return (prediction - target) / (prediction * (1 - prediction) + 0.005)
