@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from promiseless.Architecture import Architecture
+from promiseless.architecture import Architecture
 from promiseless.layer import InputLayer, HiddenLayer
 from promiseless.activation import Sigmoid
 

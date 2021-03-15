@@ -1,7 +1,7 @@
 from typing import Type, Union
 from promiseless.initialization import RandomInitialization, InitializationMethod
 from promiseless.loss import MSE, LossFunction
-from promiseless.Model import Model
+from promiseless.model import Model
 from promiseless.layer import InputLayer, HiddenLayer
 
 
