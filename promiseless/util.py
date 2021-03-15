@@ -64,13 +64,13 @@ def visualize_loss(model, filename=None):
         plt.show()
 
 
-def visualize_losses(models, labels=None, data="train", filename=None):
+def visualize_losses(models, labels=None, data="train", start_from=0, filename=None):
     fig = plt.figure()
     if not labels:
         labels = ["Model {0}".format(j) for j in range(1, len(models)+1)]
     for model, label in zip(models, labels):
         i = 0 if data == "train" else 1
-        plt.plot(range(1, len(model.training_history[i])+1), model.training_history[i], label="{0}".format(label))
+        plt.plot(range(start_from+1, len(model.training_history[i])+1), model.training_history[i][start_from:], label="{0}".format(label))
         plt.title("Loss during training")
         plt.xlabel("Number of epoch")
         plt.ylabel("Loss")
@@ -98,11 +98,11 @@ def visualize_results2(x_test, results, y_test, task, labels=None, filename=None
     elif task == "classification":
         m = n//3 + 1
         plt.subplot(m,3,1)
-        plt.scatter(x_test[:, 0], x_test[:, 1], c=np.argmax(y_test, axis=1))
+        plt.scatter(x_test[:, 0], x_test[:, 1], c=np.argmax(y_test, axis=1), s=3)
         plt.title("Original test set")
         for i in range(2, n+2):
             plt.subplot(m,3,i)
-            plt.scatter(x_test[:, 0], x_test[:, 1], c=results[i-2])
+            plt.scatter(x_test[:, 0], x_test[:, 1], c=results[i-2], s=3)
             plt.title("{0}".format(labels[i-2]))
     if filename:
         plt.savefig("plots/{}_{}".format(filename, task[:4]))
