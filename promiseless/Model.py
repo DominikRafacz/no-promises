@@ -45,6 +45,7 @@ class Model:
                         error = layer.calculate_prev_error(self._layers[j - 1].derivative(layer_values[j]), error)
                     layer.update_weights(momentum[j], learning_rate)
             train_loss = self.predict(x_train, y_train)[1]
+            print("Epoch: {0:d} loss:{1:.4f}".format(ep+1, numpy.round(train_loss, 4)))
             self.training_history[0].append(train_loss)
             if evaluation_dataset:
                 eval_loss = self.predict(evaluation_dataset[0], evaluation_dataset[1])[1]
@@ -56,6 +57,7 @@ class Model:
             _, data = layer.feedforward(data)
         if y_test is not None:
             loss = self._loss_function.calculate(data, y_test)
+            print(loss)
             if return_class:
                 return data.argmax(axis=1).reshape([-1, 1]), loss
             return data, loss
