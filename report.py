@@ -89,6 +89,7 @@ np.random.seed(123)
 mdl = Architecture()\
     .add_input_layer(InputLayer(1))\
     .add_layer(HiddenLayer(5, activation=Tanh))\
+    .add_layer(HiddenLayer(5, activation=Sigmoid))\
     .add_layer(HiddenLayer(1))\
     .build_model()
 
