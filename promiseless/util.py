@@ -27,8 +27,8 @@ def read_data(task, dataset_name, path_to_data=""):
 def visualize_results(x_test, result, y_test, task, filename=None):
     fig = plt.figure()
     if task == "regression":
-        plt.plot(x_test, result, label="Fitted values")
-        plt.plot(x_test, y_test, label="Original values")
+        plt.scatter(x_test, result, label="Fitted values")
+        plt.scatter(x_test, y_test, label="Original values")
         plt.title("Fitted vs original")
         plt.xlabel("x")
         plt.ylabel("y")
