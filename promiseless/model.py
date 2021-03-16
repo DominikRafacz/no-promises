@@ -57,7 +57,6 @@ class Model:
             _, data = layer.feedforward(data)
         if y_test is not None:
             loss = self._loss_function.calculate(data, y_test)
-            print(loss)
             if return_class:
                 return data.argmax(axis=1).reshape([-1, 1]), loss
             return data, loss
