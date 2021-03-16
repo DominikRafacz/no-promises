@@ -64,17 +64,27 @@ def visualize_loss(model, filename=None):
         plt.show()
 
 
-def visualize_losses(models, labels=None, data="train", start_from=0, filename=None):
+def visualize_losses(models, labels=None, data="train", start_from=0, filename=None, styles=None):
     fig = plt.figure()
     if not labels:
         labels = ["Model {0}".format(j) for j in range(1, len(models)+1)]
-    for model, label in zip(models, labels):
-        i = 0 if data == "train" else 1
-        plt.plot(range(start_from+1, len(model.training_history[i])+1), model.training_history[i][start_from:], label="{0}".format(label))
-        plt.title("Loss during training")
-        plt.xlabel("Number of epoch")
-        plt.ylabel("Loss")
-        plt.legend()
+    if styles is None:
+        for model, label in zip(models, labels):
+            i = 0 if data == "train" else 1
+            plt.plot(range(start_from+1, len(model.training_history[i])+1), model.training_history[i][start_from:], label="{0}".format(label))
+            plt.title("Loss during training")
+            plt.xlabel("Number of epoch")
+            plt.ylabel("Loss")
+            plt.legend()
+    else:
+        for model, label, style in zip(models, labels, styles):
+            i = 0 if data == "train" else 1
+            plt.plot(range(start_from + 1, len(model.training_history[i]) + 1), model.training_history[i][start_from:],
+                     label="{0}".format(label), color=style['color'], linestyle=style['linestyle'])
+            plt.title("Loss during training")
+            plt.xlabel("Number of epoch")
+            plt.ylabel("Loss")
+            plt.legend()
     if filename:
         plt.savefig("plots/{}_loss".format(filename))
         plt.close(fig)
