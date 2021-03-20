@@ -4,7 +4,8 @@ import math
 import matplotlib.pyplot as plt
 plt.ioff()
 
-def read_data(task, dataset_name, path_to_data=""):
+
+def read_data(task, dataset_name, test_set=False, path_to_data=""):
     data = pd.read_csv("{0}data/{1}/{2}.csv".format(path_to_data, task, dataset_name))
     if task == "regression":
         x_train = data.loc[:, ["x"]]
@@ -21,6 +22,24 @@ def read_data(task, dataset_name, path_to_data=""):
         print("Unknown task")
         x_train = data
         y_train = None
+    if test_set:
+        data_test = pd.read_csv("{0}data/{1}/{2}.csv".format(path_to_data, task, dataset_name.replace("train", "test")))
+        if task == "regression":
+            x_test = data_test.loc[:, ["x"]]
+            x_test = np.array(x_test)
+            x_test = (x_test - x_train.mean()) / x_train.std()
+            y_test = np.array(data_test.loc[:, ["y"]])
+            y_test = (y_test - y_train.mean()) / y_train.std()
+        elif task == "classification":
+            x_test = data_test.loc[:, ["x", "y"]]
+            x_test = np.array(x_test)
+            x_test = (x_test - x_train.mean(axis=0)) / x_train.std(axis=0)
+            y_test = np.array(pd.get_dummies(data_test.loc[:, "cls"]))
+        else:
+            print("Unknown task")
+            x_test = data
+            y_test = None
+        return x_train, y_train, x_test, y_test
     return x_train, y_train
 
 
