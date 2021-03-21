@@ -55,7 +55,7 @@ class Tanh(ActivationFunction):
 class Softmax(ActivationFunction):
     @staticmethod
     def calculate(data: numpy.ndarray):
-        data = data - data.max(axis=0)
+        data = data - data.max(axis=1).reshape(-1, 1)
         data = numpy.exp(data)
         return data / numpy.sum(data, axis=1).reshape(-1, 1)
 
