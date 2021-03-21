@@ -28,7 +28,8 @@ class Sigmoid(ActivationFunction):
 
     @staticmethod
     def derivative(data: numpy.ndarray):
-        return Sigmoid.calculate(data) * (1 - Sigmoid.calculate(data))
+        sigm = Sigmoid.calculate(data)
+        return sigm * (1 - sigm)
 
 
 class ReLU(ActivationFunction):
@@ -54,9 +55,11 @@ class Tanh(ActivationFunction):
 class Softmax(ActivationFunction):
     @staticmethod
     def calculate(data: numpy.ndarray):
+        data = data - data.max(axis=0)
         data = numpy.exp(data)
         return data / numpy.sum(data, axis=1).reshape(-1, 1)
 
     @staticmethod
     def derivative(data: numpy.ndarray):
-        return Softmax.calculate(data) * (1 - Softmax.calculate(data))
+        soft = Softmax.calculate(data)
+        return soft * (1 - soft)
