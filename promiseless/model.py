@@ -2,6 +2,7 @@ import numpy
 from typing import Type, Tuple, Union
 from promiseless.layer import InputLayer, HiddenLayer
 from promiseless.loss import LossFunction
+from promiseless.util import accuracy
 
 
 class Model:
@@ -44,8 +45,8 @@ class Model:
                     if j != 0:
                         error = layer.calculate_prev_error(self._layers[j - 1].derivative(layer_values[j]), error)
                     layer.update_weights(momentum[j], learning_rate)
-            train_loss = self.predict(x_train, y_train)[1]
-            print("Epoch: {0:d} loss:{1:.4f}".format(ep+1, numpy.round(train_loss, 4)))
+            res, train_loss = self.predict(x_train, y_train, return_class=True)
+            print("Epoch: {0:d} loss:{1:.4f} accuracy:{2:.4f}".format(ep+1, numpy.round(train_loss, 4), accuracy(y_train, res)))
             self.training_history[0].append(train_loss)
             if evaluation_dataset:
                 eval_loss = self.predict(evaluation_dataset[0], evaluation_dataset[1])[1]

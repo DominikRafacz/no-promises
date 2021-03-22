@@ -138,3 +138,17 @@ def visualize_results2(x_test, results, y_test, task, labels=None, filename=None
         plt.close(fig)
     else:
         plt.show()
+
+
+def transform(x, x_mean=None, x_std=None):
+    if x_mean is None:
+        x_mean = x.mean(axis=0)
+        x_std = x.std(axis=0)
+    x_std_nonzero = x_std > 1e-4
+    x = x - x_mean
+    x[:, x_std_nonzero] = x[:, x_std_nonzero] / x_std[x_std_nonzero]
+    return x, x_mean, x_std
+
+
+def accuracy(y, y_hat):
+    return np.sum(y.argmax(axis=1).reshape(-1, 1) == y_hat) / len(y)
