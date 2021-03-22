@@ -22,6 +22,7 @@ class Architecture:
 
     def set_initialization_method(self, initialization_method: Type[InitializationMethod]):
         self._init_method = initialization_method
+        return self
 
     def set_loss_function(self, loss_function: Type[LossFunction]):
         self._loss_function = loss_function
