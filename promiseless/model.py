@@ -46,11 +46,15 @@ class Model:
                         error = layer.calculate_prev_error(self._layers[j - 1].derivative(layer_values[j]), error)
                     layer.update_weights(momentum[j], learning_rate)
             res, train_loss = self.predict(x_train, y_train, return_class=True)
-            print("Epoch: {0:d} loss:{1:.4f} accuracy:{2:.4f}".format(ep+1, numpy.round(train_loss, 4), accuracy(y_train, res)))
             self.training_history[0].append(train_loss)
             if evaluation_dataset:
-                eval_loss = self.predict(evaluation_dataset[0], evaluation_dataset[1])[1]
+                eval_res, eval_loss = self.predict(evaluation_dataset[0], evaluation_dataset[1], return_class=True)
+                print("Epoch: {0:d} loss:{1:.4f} accuracy:{2:.4f} accuracy validation:{3:.4f}".format(ep + 1, numpy.round(train_loss, 4),
+                                                                          accuracy(y_train, res), accuracy(evaluation_dataset[1], eval_res)))
                 self.training_history[1].append(eval_loss)
+            else:
+                print("Epoch: {0:d} loss:{1:.4f} accuracy:{2:.4f}".format(ep + 1, numpy.round(train_loss, 4),
+                                                                          accuracy(y_train, res)))
 
     def predict(self, x_test: numpy.ndarray, y_test: Union[numpy.ndarray, None] = None, return_class: bool = False):
         data = x_test
